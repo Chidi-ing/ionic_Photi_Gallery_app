@@ -8,6 +8,7 @@ import { Preferences } from '@capacitor/preferences';
 })
 export class PhotoService {
   public photos: UserPhoto[] = [];
+  private PHOTO_STORAGE: string = 'photos';
 
   constructor() { }
 
@@ -21,7 +22,12 @@ export class PhotoService {
 
     // Save the picture and add it to photo collection
     const savedImageFile = await this.savePicture(capturedPhoto);    
-    this.photos.unshift(savedImageFile);    
+    this.photos.unshift(savedImageFile);
+    
+    Storage.set({
+      key: this.PHOTO_STORAGE,
+      value: JSON.stringify(this.photos),
+    });
   }
 
   private async savePicture(photo: Photo) { 
@@ -64,6 +70,15 @@ export class PhotoService {
     };
     reader.readAsDataURL(blob);
   });
+
+  public async loadSaved(){
+    //Retrieve cached photo array data
+    const photoList = await Storage.length({key: this.PHOTO_STORAGE})
+
+  }
+
+
+
 }
 
 export interface UserPhoto {
